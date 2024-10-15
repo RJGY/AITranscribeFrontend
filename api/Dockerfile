@@ -4,6 +4,9 @@ WORKDIR /app
 
 COPY . /app
 
+COPY ./api/requirements.txt /app
+COPY ./api/app.py /app
+
 RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 3001
