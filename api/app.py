@@ -1,10 +1,13 @@
 import os
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'  # Specify the folder for audio uploads
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 
 @app.route('/api/hello')
 def hello_world():
