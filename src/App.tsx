@@ -20,9 +20,7 @@ function App() {
         const formData = new FormData();
         formData.append('audio', audioBlob, 'recording.wav');
 
-        const audioFilesDir = process.env.REACT_APP_AUDIO_FILES_DIR || 'audio_files'; // Use environment variable or default value
-
-        fetch(`/api/upload?filename=${audioFilesDir}/${Date.now()}.wav`, {
+        fetch(`/api/upload?filename=${Date.now()}.wav`, {
           method: 'POST',
           body: formData,
         })
@@ -40,6 +38,7 @@ function App() {
       mediaRecorderRef.current = mediaRecorder;
       mediaRecorder.start();
       setIsRecording(true);
+      
     } catch (error) {
       console.error('Error accessing microphone:', error);
     }
