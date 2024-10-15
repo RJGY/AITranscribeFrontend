@@ -20,7 +20,7 @@ function App() {
         const formData = new FormData();
         formData.append('audio', audioBlob, 'recording.wav');
 
-        fetch(`/api/upload?filename=${Date.now()}.wav`, {
+        fetch(`http://localhost:3001/api/upload?filename=${Date.now()}.wav`, {
           method: 'POST',
           body: formData,
         })
