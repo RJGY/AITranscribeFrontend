@@ -18,20 +18,26 @@ function App() {
       mediaRecorder.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
         const formData = new FormData();
-        formData.append('audio', audioBlob, 'recording.wav');
+        formData.append('file', audioBlob, 'recording.wav');
 
-        fetch(`http://localhost:3001/api/upload?filename=${Date.now()}.wav`, {
+        fetch(`http://192.168.4.56:8000/transcribe/`, {
           method: 'POST',
           body: formData,
+          mode: 'cors',
         })
-          .then((response) => {
+          .then(async (response) => {
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`);
             }
-            console.log('Audio file uploaded successfully!');
+            const result = await response.text(); // or response.json() if your backend returns JSON
+            console.log('Audio file uploaded successfully!', result);
           })
           .catch((error) => {
             console.error('Error uploading audio file:', error);
+            // Log more details about the error
+            if (error instanceof TypeError) {
+              console.error('Network error or CORS issue:', error.message);
+            }
           });
       };
 
