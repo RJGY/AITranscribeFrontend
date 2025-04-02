@@ -80,7 +80,3 @@ This frontend expects the backend to:
     "transcript": "Full transcript of the audio"
   }
   ```
-
-## License
-
-MIT
