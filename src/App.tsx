@@ -4,16 +4,25 @@ import './App.css';
 function App() {
   const [isRecording, setIsRecording] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [transcriptionData, setTranscriptionData] = useState<{
+    summary: string;
+    transcript: string;
+  } | null>(null);
+  const [isLoading, setIsLoading] = useState(false); 
+  const [error, setError] = useState<string | null>(null); 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const timerIntervalRef = useRef<number | null>(null);
 
+  // Get API URL from environment variables with fallback
+  const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
-
+      
+      setError(null); // Clear any previous errors
       setElapsedTime(0);
       timerIntervalRef.current = window.setInterval(() => {
         setElapsedTime(prev => prev + 1);
@@ -28,7 +37,8 @@ function App() {
         const formData = new FormData();
         formData.append('file', audioBlob, 'recording.wav');
 
-        fetch(`http://192.168.4.56:8000/transcribe/`, {
+        setIsLoading(true);
+        fetch(`${apiUrl}/transcribe/`, {
           method: 'POST',
           body: formData,
           mode: 'cors',
@@ -37,14 +47,22 @@ function App() {
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const result = await response.text();
+            const result = await response.json();
+            setTranscriptionData({
+              summary: result.summary.trim(),
+              transcript: result.transcript.trim()
+            });
             console.log('Audio file uploaded successfully!', result);
           })
           .catch((error) => {
             console.error('Error uploading audio file:', error);
+            setError('Error: Unable to connect to server. Please try again later.');
             if (error instanceof TypeError) {
               console.error('Network error or CORS issue:', error.message);
             }
+          })
+          .finally(() => {
+            setIsLoading(false);
           });
       };
 
@@ -109,6 +127,37 @@ function App() {
             </div>
           )}
         </div>
+
+        {isLoading && (
+          <div className="loading-container">
+            <div className="loading-spinner"></div>
+            <p>Processing your recording...</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="error-container">
+            <div className="error-icon">❌</div>
+            <p>{error}</p>
+          </div>
+        )}
+
+        {transcriptionData && (
+          <div className="transcription-container" style={{ maxWidth: '80%', textAlign: 'left' }}>
+            <div className="transcription-section">
+              <h2>Summary</h2>
+              <div className="transcription-text">
+                {transcriptionData.summary}
+              </div>
+            </div>
+            <div className="transcription-section" style={{ marginTop: '1.5rem' }}>
+              <h2>Transcript</h2>
+              <div className="transcription-text">
+                {transcriptionData.transcript}
+              </div>
+            </div>
+          </div>
+        )}
       </header>
     </div>
   );

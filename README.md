@@ -1,46 +1,86 @@
-# Getting Started with Create React App
+# AITranscribeFrontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Frontend for AITranscribe that you can host on your local network to record audio and get AI-powered transcriptions.
 
-## Available Scripts
+## Overview
 
-In the project directory, you can run:
+This React application provides a simple, user-friendly interface for recording audio and receiving transcriptions. It connects to a backend transcription service running on your local network, making it easy to transcribe voice recordings without relying on external services.
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- **Audio Recording**: One-click recording from your device's microphone
+- **Real-time Timer**: Shows recording duration while in progress
+- **Transcription Processing**: Sends recordings to the backend for AI-powered transcription
+- **Summary View**: Displays both a concise summary and the full transcript of your recording
+- **Error Handling**: Provides clear feedback when unable to connect to the server
+- **Responsive Design**: Works on various screen sizes
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Setup
 
-### `npm test`
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/aitranscribefrontend.git
+   cd aitranscribefrontend
+   ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. Install dependencies:
+   ```
+   npm install
+   ```
 
-### `npm run build`
+3. Configure the backend server address:
+   Create a `.env` file in the root directory with the following content:
+   ```
+   REACT_APP_API_URL=http://your-backend-ip:8000
+   ```
+   Replace `your-backend-ip` with the IP address of your backend server.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+4. Start the development server:
+   ```
+   npm start
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+5. For production build:
+   ```
+   npm run build
+   ```
+   
+   You can then serve the built files from the `build` directory using any static file server.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Usage
 
-### `npm run eject`
+1. Click "Start Recording" to begin capturing audio
+2. Speak clearly into your microphone
+3. Click "Stop Recording" when finished
+4. Wait for the AI to process your recording
+5. View both the summary and full transcript of your recording
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Environment Variables
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+| Variable | Description | Default |
+|----------|-------------|---------|
+| REACT_APP_API_URL | URL of the backend transcription service | http://localhost:8000 |
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Tech Stack
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- React with TypeScript
+- MediaRecorder API for audio capture
+- Fetch API for communication with the backend
 
-## Learn More
+## Backend Requirements
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+This frontend expects the backend to:
+- Accept POST requests at the `/transcribe/` endpoint
+- Accept form data with an audio file named "file"
+- Return JSON with the following format:
+  ```json
+  {
+    "status": "success",
+    "summary": "Concise summary of the audio",
+    "transcript": "Full transcript of the audio"
+  }
+  ```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## License
+
+MIT
